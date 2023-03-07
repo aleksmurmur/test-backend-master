@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: dev_mem
+    image: postgres:10-alpine
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: dev_mem
+    ports:
+      - "45533:5432"
+    volumes:
+      - db:/data/postgres
+volumes:
+  db:
+    driver: local
