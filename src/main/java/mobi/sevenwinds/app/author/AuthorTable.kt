@@ -1,5 +1,6 @@
 package mobi.sevenwinds.app.author
 
+import mobi.sevenwinds.app.utils.DateTimeUtils.toStringResponse
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -18,6 +19,6 @@ class AuthorEntity(id: EntityID<Int>) : IntEntity(id) {
     var creationDate by AuthorTable.creationDate
 
     fun toResponse(): AuthorRecordResponse {
-        return AuthorRecordResponse(fullName, creationDate)
+        return AuthorRecordResponse(id.value, fullName, creationDate.toStringResponse())
     }
 }
