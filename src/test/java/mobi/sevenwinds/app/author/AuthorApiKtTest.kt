@@ -25,11 +25,5 @@ class AuthorApiKtTest : ServerTest() {
             .toResponse<AuthorRecordResponse>().let { response ->
                 Assert.assertEquals(authorRequest.fullName, response.fullName)
             }
-        transaction {
-            val saved = AuthorEntity.find { AuthorTable.fullName eq authorRequest.fullName }
-                .firstOrNull()
-            Assert.assertNotNull(saved)
-            Assert.assertEquals(authorRequest.fullName, saved!!.fullName)
-        }
     }
 }

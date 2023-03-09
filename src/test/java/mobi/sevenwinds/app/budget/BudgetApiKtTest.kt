@@ -1,6 +1,8 @@
 package mobi.sevenwinds.app.budget
 
 import io.restassured.RestAssured
+import mobi.sevenwinds.app.author.AuthorRecordRequest
+import mobi.sevenwinds.app.author.AuthorRecordResponse
 import mobi.sevenwinds.common.ServerTest
 import mobi.sevenwinds.common.jsonBody
 import mobi.sevenwinds.common.toResponse
@@ -75,12 +77,31 @@ class BudgetApiKtTest : ServerTest() {
             .then().statusCode(400)
     }
 
+    @Test
+    fun testAuthorAdding() {
+        val authorResponse = RestAssured.given()
+            .jsonBody(AuthorRecordRequest("Author Name"))
+            .post("/author/add")
+            .toResponse<AuthorRecordResponse>()
+
+        RestAssured.given()
+            .jsonBody(BudgetRecordRequest(2020, 5, 100, BudgetType.Приход, authorResponse.id))
+            .post("/budget/add")
+            .toResponse<BudgetRecordResponse>().let {
+                Assert.assertEquals(authorResponse.fullName, it.authorName)
+                Assert.assertEquals(authorResponse.creationDate, it.authorCreationDate)
+            }
+    }
+
     private fun addRecord(record: BudgetRecordRequest) {
         RestAssured.given()
             .jsonBody(record)
             .post("/budget/add")
-            .toResponse<BudgetRecordRequest>().let { response ->
-                Assert.assertEquals(record, response)
+            .toResponse<BudgetRecordResponse>().let { response ->
+                Assert.assertEquals(record.year, response.year)
+                Assert.assertEquals(record.month, response.month)
+                Assert.assertEquals(record.amount, response.amount)
+                Assert.assertEquals(record.type, response.type)
             }
     }
 }
